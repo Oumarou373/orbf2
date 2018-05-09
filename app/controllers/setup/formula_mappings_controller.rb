@@ -77,7 +77,7 @@ class Setup::FormulaMappingsController < PrivateController
   end
 
   def build_formula_mappings(options = {})
-    default_options = { activity: true, package: true, payment: true, missing_only: false }
+    default_options = { activity: true, package: true, payment: true, zone: true, missing_only: false }
     options = default_options.merge(options)
     mappings = []
     project = current_project(project_scope: :fully_loaded)
@@ -105,6 +105,7 @@ class Setup::FormulaMappingsController < PrivateController
 
     other_rules = []
     other_rules += project.packages.flat_map(&:rules).select(&:package_kind?) if options[:package]
+    other_rules += project.packages.flat_map(&:rules).select(&:zone_kind?) if options[:zone]
     other_rules += project.payment_rules.flat_map(&:rule) if options[:payment]
 
     mappings += other_rules.map do |rule|
